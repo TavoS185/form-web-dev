@@ -3,35 +3,45 @@ import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Welcome to Astro FP.">
 	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
+		<h1 class="text-gradient">Welcome to Astro</h1>
+
+		<form id="form" novalidate>
+			<div>
+				<h4 class="text-gradient">Form Create Account</h4>
+			</div>
+			<label for="userName" class="text-gradient">User Name</label>
+			<input class="form-input" type="text" placeholder="Enter your user name" name="userName" id="userName" required>
+			<span  id="userError" class="error" aria-live="polite"></span>
+
+			<label for="email" class="text-gradient">Email</label>
+			<input class="form-input" type="email" placeholder="Enter your email" name="email" id="email" required>
+			<span  id="mailError" class="error" aria-live="polite"></span>
+
+			<label for="password" class="text-gradient">Password</label>
+			<input class="form-input" type="password" placeholder="Enter your password" name="password" id="password" required pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[@$!%#?&]).{8,}$">
+			<p class="checkbox-container">
+				<input class="form-checkbox" type="checkbox" id="passwordDisplay"><label for="showPassword" class="text-gradient">Show</label>
+			</p>
+			<span class="form-helper">Password must be 8 characters long with a number & a special character</span>
+			<span  id="passwordError" class="error" aria-live="polite"></span>
+
+			<label for="confirmPass" class="text-gradient">Confirm Password</label>
+			<input class="form-input" type="password" placeholder="Confirm your password" name="confirmPass" id="confirmPass" required >
+			<span class="form-helper">Please confirm your password</span>
+			<span  id="confirmError" class="error" aria-live="polite"></span>
+
+			<button class="form-button">Submit</button>
+
+		</form>
+
+		<dialog class="modal" id="modal">
+			<p> Success! Form data retrived</p>
+			<form method="dialog">
+				<button class="modal-button">Ok</button>
+			</form>
+		</dialog>
 	</main>
 </Layout>
 
@@ -46,36 +56,196 @@ import Card from '../components/Card.astro';
 		font-weight: 800;
 		margin: 0;
 	}
+	form {
+		display: flex;
+		flex-direction: column;
+		background-color: whitesmoke;
+		border-radius: 20px;
+		box-shadow: 2px 2px 2px black;
+		padding: 1rem
+
+	}
+	.text {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
 	.text-gradient {
 		background-image: var(--accent-gradient);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-size: 400%;
-		background-position: 0%;
+		background-position: 25%;
+		margin-top: 1.5rem;
 	}
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		border: 1px solid rgba(var(--accent), 25%);
-		background-color: white;
-		padding: 1rem;
-		border-radius: 0.4rem;
+	.form-error {
+		border: 1px solid red;
 	}
-	.instructions code {
-		font-size: 0.875em;
-		font-weight: bold;
-		background: rgba(var(--accent), 12%);
-		color: rgb(var(--accent));
-		border-radius: 4px;
-		padding: 0.3em 0.45em;
+	.form-helper {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 25%;
+		font-size: 12px;
 	}
-	.instructions strong {
-		color: rgb(var(--accent));
+	.form-input {
+		height: 1.5rem;
+		margin: 0.25rem 0;
 	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
+	.checkbox-container {
+		height: 1rem;
+		margin: 0 0 0.25rem 0;
+	}
+	.form-checkbox {
+		margin: 0 0.25rem 0 0;
+	}
+	.form-button {
+		background-image: var(--accent-gradient);
+		background-size: 400%;
+		background-position: 30%;
+		height: 2.5rem;
+		width: 70%;
+		margin: 2.5rem 5rem 1.5rem;
+		border: none;
+		border-radius: 5px;
+		font-size: 16px;
+	}
+	.modal-button {
+		background-image: var(--accent-gradient);
+		background-size: 400%;
+		background-position: 30%;
 	}
 </style>
+
+<script>
+	var formValid = false;
+	const modal = document.getElementById("modal");
+	const form = document.getElementById("form");
+	const userName = document.getElementById("userName");
+	const userError = document.getElementById("userError");
+	const mail = document.getElementById("email");
+	const mailError = document.getElementById("mailError");
+	const password = document.getElementById("password");
+	const passwordError = document.getElementById("passwordError");
+	const checkbox = document.getElementById("passwordDisplay");
+	const confirmPass = document.getElementById("confirmPass");
+	const confirmError = document.getElementById("confirmError");
+
+	function checkUser() {
+		if(userName.validity.valueMissing){
+			userError.textContent = "You need to enter an user name."
+		}
+		formValid = false;
+		userName.classList.add("form-error");
+		userError.className = "error active";
+	}
+
+	function checkMail() {
+		if(mail.validity.valueMissing){
+			mailError.textContent = "You need to enter an email address.";
+		}else if(mail.validity.typeMismatch){
+			mailError.textContent = "Entered value needs to be an email address.";
+		}
+		formValid = false;
+		mail.classList.add("form-error");
+		mailError.className = "error active";
+	}
+
+	function checkPassword() {
+		if(password.validity.valueMissing){
+			passwordError.textContent = "You need to enter a password.";
+		}else if(password.validity.patternMismatch){
+			passwordError.textContent = "Entered value needs to be a valid password.";
+		}
+		formValid = false;
+		password.classList.add("form-error");
+		passwordError.className = "error active";
+		
+	}
+
+	function checkConfirm() {
+		let confirmPassValue = confirmPass.value;
+		let passwordValue = password.value;
+		if(confirmPassValue){
+			if(confirmPassValue != passwordValue){
+				confirmError.textContent = "Entered value needs to be the same as the password.";
+				formValid = false;
+				confirmPass.classList.add("form-error");
+				confirmError.className = "error active";
+			}else {
+				formValid = true;
+				confirmError.textContent = "";
+				confirmPass.classList.remove("form-error");
+				confirmError.className = "error";
+			}
+		}else {
+			formValid = false;
+			confirmError.textContent = "You need to confirm your password.";
+			confirmPass.classList.add("form-error");
+			confirmError.className = "error active";
+		}
+	}
+
+
+	userName.addEventListener("input", (e) => {
+		if(userName.validity.valid){
+			userError.textContent = "";
+			userName.classList.remove("form-error");
+			userError.className = "error";
+			formValid = true;
+		}else {
+			checkUser();
+		}
+	});
+
+	mail.addEventListener("input", (e) => {
+		if(mail.validity.valid){
+			mailError.textContent = "";
+			mail.classList.remove("form-error");
+			mailError.className = "error";
+			formValid = true;
+		}else {
+			checkMail();
+		}
+	});
+
+	password.addEventListener("input", (e) => {
+		if(password.validity.valid){
+			passwordError.textContent = "";
+			password.className.remove("form-error");
+			passwordError.className = "error";
+			formValid = true;
+		}else {
+			checkPassword();
+		}
+	});
+
+	confirmPass.addEventListener("input", checkConfirm);
+
+
+	checkbox.addEventListener('change', (evt) => {
+		if(evt.currentTarget.checked){
+			password.type = "text";
+		}else {
+			password.type = "password";
+		}
+	});
+
+	modal.addEventListener('close', (evt) => {
+		form.reset();
+	});
+
+	form.addEventListener('submit', (evt) => {
+		checkUser();
+		checkMail();
+		checkPassword();
+		checkConfirm();
+		if(formValid === true){
+			modal.showModal();
+			evt.preventDefault();
+		}else {
+			evt.preventDefault();
+		}
+	});
+</script>
